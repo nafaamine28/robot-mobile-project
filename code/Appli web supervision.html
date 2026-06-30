@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Supervision Robot</title>
+
+<style>
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e293b, #020617);
+    color: white;
+    text-align: center;
+}
+
+/* TITRE */
+h1 {
+    margin-top: 20px;
+    font-size: 32px;
+    background: linear-gradient(90deg, #38bdf8, #6366f1);
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+}
+
+/* BOUTONS */
+button {
+    width: 80px;
+    height: 80px;
+    margin: 10px;
+    border-radius: 20px;
+    border: none;
+    background: #1e293b;
+    color: white;
+    font-size: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    transition: 0.2s;
+}
+
+button:hover {
+    transform: scale(1.1);
+    background: #334155;
+}
+
+.stop {
+    background: #dc2626;
+}
+
+/* STATUS */
+.status {
+    margin-top: 15px;
+    font-size: 18px;
+    color: #94a3b8;
+}
+
+/* CARD CAPTEURS */
+.card {
+    margin: 30px auto;
+    padding: 20px;
+    width: 300px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>🚀 Supervision Robot</h1>
+
+<!-- COMMANDES -->
+<button onclick="sendCmd('forward')">↑</button>
+<br>
+<button onclick="sendCmd('left')">←</button>
+<button class="stop" onclick="sendCmd('stop')">■</button>
+<button onclick="sendCmd('right')">→</button>
+<br>
+<button onclick="sendCmd('backward')">↓</button>
+
+<!-- STATUS -->
+<div class="status">
+Status: <span id="status">Idle</span>
+</div>
+
+<!-- CAPTEURS -->
+<div class="card">
+<h2>📊 Capteurs</h2>
+
+<p>📏 Distance : <span id="distance">--</span> cm</p>
+<p>📍 Ligne : <span id="ligne">--</span></p>
+<p>🚧 Obstacle : <span id="obstacle">--</span></p>
+<p>🏷 RFID : <span id="rfid">--</span></p>
+<p>🧭 IMU X : <span id="imu">--</span></p>
+
+</div>
+
+<script>
+
+// ENVOI DE COMMANDE
+function sendCmd(cmd) {
+    fetch("/" + cmd);
+    document.getElementById("status").innerText = cmd;
+}
+
+// RECUP DATA CAPTEURS
+setInterval(() => {
+    fetch("/data")
+    .then(res => res.json())
+    .then(data => {
+
+        document.getElementById("distance").innerText = data.distance;
+        document.getElementById("ligne").innerText = data.ligne;
+        document.getElementById("obstacle").innerText = data.obstacle;
+        document.getElementById("rfid").innerText = data.rfid;
+        document.getElementById("imu").innerText = data.imu_x;
+
+    }).catch(e => console.log("Erreur :", e));
+}, 1000);
+
+</script>
+
+</body>
+</html>
